@@ -1,0 +1,701 @@
+
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing Calculator</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100%;
+      width: 100%;
+    }
+
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+
+    .calculator-wrapper {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      min-height: 100%;
+      width: 100%;
+      padding: 3rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calculator-container {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      max-width: 900px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .calculator-header {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      color: #ffffff;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calculator-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .business-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin: 0 0 0.5rem 0;
+      letter-spacing: -0.02em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tagline {
+      font-size: 1.125rem;
+      font-weight: 400;
+      margin: 0;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+
+    .calculator-body {
+      padding: 2.5rem 2rem;
+    }
+
+    .service-card {
+      background: #ffffff;
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .service-card:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 8px 24px rgba(96, 165, 250, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .service-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .service-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #000000;
+      margin: 0;
+    }
+
+    .price-badge {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .slider-container {
+      margin-top: 1rem;
+    }
+
+    .slider-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+
+    .slider-value {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #000000;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.6);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(96, 165, 250, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    input[type="range"]::-moz-range-thumb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.6);
+    }
+
+    .total-section {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .total-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 0.5rem 0;
+      opacity: 0.8;
+    }
+
+    .total-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #000000;
+      border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 640px) {
+      .calculator-wrapper {
+        padding: 1.5rem 1rem;
+      }
+
+      .business-name {
+        font-size: 1.75rem;
+      }
+
+      .tagline {
+        font-size: 1rem;
+      }
+
+      .calculator-body {
+        padding: 1.5rem 1rem;
+      }
+
+      .service-card {
+        padding: 1.25rem;
+      }
+
+      .service-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .total-amount {
+        font-size: 2.25rem;
+      }
+
+      .button-group {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="calculator-wrapper">
+   <div class="calculator-container">
+    <div class="calculator-header">
+     <h1 class="business-name" id="businessName">Sunny Digitals</h1>
+     <p class="tagline" id="tagline">Elevating Your Brand with Creative Excellence</p>
+    </div>
+    <div class="calculator-body">
+     <div class="service-card">
+      <div class="service-header">
+       <h2 class="service-title" id="service1Name">Video Editing</h2><span class="price-badge">TZS 30,000 - 150,000 / video</span>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="videos">Number of Videos</label> <span class="slider-value" id="videosValue">2 videos</span>
+       </div><input type="range" id="videos" min="1" max="10" value="2" step="1">
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="videoRate">Rate per Video</label> <span class="slider-value" id="videoRateValue">TZS 90,000</span>
+       </div><input type="range" id="videoRate" min="30000" max="150000" value="90000" step="10000">
+      </div>
+     </div>
+     <div class="service-card">
+      <div class="service-header">
+       <h2 class="service-title" id="service2Name">Product Advertisement</h2><span class="price-badge">TZS 40,000 - 500,000 / campaign</span>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="campaigns">Number of Campaigns</label> <span class="slider-value" id="campaignsValue">1 campaign</span>
+       </div><input type="range" id="campaigns" min="0" max="5" value="1" step="1">
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="campaignRate">Rate per Campaign</label> <span class="slider-value" id="campaignRateValue">TZS 270,000</span>
+       </div><input type="range" id="campaignRate" min="40000" max="500000" value="270000" step="20000">
+      </div>
+     </div>
+     <div class="service-card">
+      <div class="service-header">
+       <h2 class="service-title" id="service3Name">Music Studio Session</h2><span class="price-badge">TZS 50,000 - 200,000 / hour</span>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="studioHours">Studio Hours</label> <span class="slider-value" id="studioHoursValue">2 hours</span>
+       </div><input type="range" id="studioHours" min="0" max="10" value="2" step="0.5">
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="studioRate">Rate per Hour</label> <span class="slider-value" id="studioRateValue">TZS 125,000</span>
+       </div><input type="range" id="studioRate" min="50000" max="200000" value="125000" step="10000">
+      </div>
+     </div>
+     <div class="service-card">
+      <div class="service-header">
+       <h2 class="service-title" id="service4Name">Microsoft Excel Class Session</h2><span class="price-badge">TZS 30,000 - 80,000 / hour</span>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="excelHours">Training Hours</label> <span class="slider-value" id="excelHoursValue">0 hours</span>
+       </div><input type="range" id="excelHours" min="0" max="20" value="0" step="1">
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="excelRate">Rate per Hour</label> <span class="slider-value" id="excelRateValue">TZS 50,000</span>
+       </div><input type="range" id="excelRate" min="30000" max="80000" value="50000" step="5000">
+      </div>
+     </div>
+     <div class="service-card">
+      <div class="service-header">
+       <h2 class="service-title" id="service5Name">Data Analysis</h2><span class="price-badge">TZS 100,000 - 400,000 / project</span>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="projects">Number of Projects</label> <span class="slider-value" id="projectsValue">0 projects</span>
+       </div><input type="range" id="projects" min="0" max="5" value="0" step="1">
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="projectRate">Rate per Project</label> <span class="slider-value" id="projectRateValue">TZS 250,000</span>
+       </div><input type="range" id="projectRate" min="100000" max="400000" value="250000" step="25000">
+      </div>
+     </div>
+     <div class="service-card">
+      <div class="service-header">
+       <h2 class="service-title" id="service6Name">Web Design &amp; Development</h2><span class="price-badge">TZS 200,000 - 2,000,000 / project</span>
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="websites">Number of Websites</label> <span class="slider-value" id="websitesValue">0 websites</span>
+       </div><input type="range" id="websites" min="0" max="5" value="0" step="1">
+      </div>
+      <div class="slider-container">
+       <div class="slider-label"><label for="websiteRate">Rate per Website</label> <span class="slider-value" id="websiteRateValue">TZS 800,000</span>
+       </div><input type="range" id="websiteRate" min="200000" max="2000000" value="800000" step="100000">
+      </div>
+     </div>
+     <div class="total-section">
+      <p class="total-label">Estimated Total</p>
+      <p class="total-amount" id="totalAmount">TZS 900,000</p>
+     </div>
+     <div class="button-group"><button class="btn btn-primary" id="calculateBtn">Calculate Total</button> <button class="btn btn-secondary" id="resetBtn">Start Over</button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      business_name: 'Sunny Digitals',
+      tagline: 'Elevating Your Brand with Creative Excellence',
+      service_one_name: 'Video Editing',
+      service_two_name: 'Product Advertisement',
+      service_three_name: 'Music Studio Session',
+      service_four_name: 'Microsoft Excel Class Session',
+      service_five_name: 'Data Analysis',
+      service_six_name: 'Web Design & Development',
+      calculate_button: 'Calculate Total',
+      reset_button: 'Start Over',
+      background_color: '#60a5fa',
+      surface_color: '#ffffff',
+      text_color: '#000000',
+      primary_action_color: '#ef4444',
+      secondary_action_color: '#ffffff',
+      font_family: 'Inter',
+      font_size: 16
+    };
+
+    const config = window.elementSdk?.config || defaultConfig;
+
+    const elements = {
+      businessName: document.getElementById('businessName'),
+      tagline: document.getElementById('tagline'),
+      service1Name: document.getElementById('service1Name'),
+      service2Name: document.getElementById('service2Name'),
+      service3Name: document.getElementById('service3Name'),
+      service4Name: document.getElementById('service4Name'),
+      service5Name: document.getElementById('service5Name'),
+      service6Name: document.getElementById('service6Name'),
+      calculateBtn: document.getElementById('calculateBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      videos: document.getElementById('videos'),
+      videosValue: document.getElementById('videosValue'),
+      videoRate: document.getElementById('videoRate'),
+      videoRateValue: document.getElementById('videoRateValue'),
+      campaigns: document.getElementById('campaigns'),
+      campaignsValue: document.getElementById('campaignsValue'),
+      campaignRate: document.getElementById('campaignRate'),
+      campaignRateValue: document.getElementById('campaignRateValue'),
+      studioHours: document.getElementById('studioHours'),
+      studioHoursValue: document.getElementById('studioHoursValue'),
+      studioRate: document.getElementById('studioRate'),
+      studioRateValue: document.getElementById('studioRateValue'),
+      excelHours: document.getElementById('excelHours'),
+      excelHoursValue: document.getElementById('excelHoursValue'),
+      excelRate: document.getElementById('excelRate'),
+      excelRateValue: document.getElementById('excelRateValue'),
+      projects: document.getElementById('projects'),
+      projectsValue: document.getElementById('projectsValue'),
+      projectRate: document.getElementById('projectRate'),
+      projectRateValue: document.getElementById('projectRateValue'),
+      websites: document.getElementById('websites'),
+      websitesValue: document.getElementById('websitesValue'),
+      websiteRate: document.getElementById('websiteRate'),
+      websiteRateValue: document.getElementById('websiteRateValue'),
+      totalAmount: document.getElementById('totalAmount')
+    };
+
+    function updateSliderDisplays() {
+      const videos = parseFloat(elements.videos.value);
+      const videoRate = parseFloat(elements.videoRate.value);
+      const campaigns = parseFloat(elements.campaigns.value);
+      const campaignRate = parseFloat(elements.campaignRate.value);
+      const studioHours = parseFloat(elements.studioHours.value);
+      const studioRate = parseFloat(elements.studioRate.value);
+      const excelHours = parseFloat(elements.excelHours.value);
+      const excelRate = parseFloat(elements.excelRate.value);
+      const projects = parseFloat(elements.projects.value);
+      const projectRate = parseFloat(elements.projectRate.value);
+
+      elements.videosValue.textContent = `${videos} video${videos !== 1 ? 's' : ''}`;
+      elements.videoRateValue.textContent = `TZS ${videoRate.toLocaleString()}`;
+      elements.campaignsValue.textContent = `${campaigns} campaign${campaigns !== 1 ? 's' : ''}`;
+      elements.campaignRateValue.textContent = `TZS ${campaignRate.toLocaleString()}`;
+      elements.studioHoursValue.textContent = `${studioHours} hour${studioHours !== 1 ? 's' : ''}`;
+      elements.studioRateValue.textContent = `TZS ${studioRate.toLocaleString()}`;
+      elements.excelHoursValue.textContent = `${excelHours} hour${excelHours !== 1 ? 's' : ''}`;
+      elements.excelRateValue.textContent = `TZS ${excelRate.toLocaleString()}`;
+      elements.projectsValue.textContent = `${projects} project${projects !== 1 ? 's' : ''}`;
+      elements.projectRateValue.textContent = `TZS ${projectRate.toLocaleString()}`;
+      
+      const websites = parseFloat(elements.websites.value);
+      const websiteRate = parseFloat(elements.websiteRate.value);
+      elements.websitesValue.textContent = `${websites} website${websites !== 1 ? 's' : ''}`;
+      elements.websiteRateValue.textContent = `TZS ${websiteRate.toLocaleString()}`;
+    }
+
+    function calculateTotal() {
+      const videos = parseFloat(elements.videos.value);
+      const videoRate = parseFloat(elements.videoRate.value);
+      const campaigns = parseFloat(elements.campaigns.value);
+      const campaignRate = parseFloat(elements.campaignRate.value);
+      const studioHours = parseFloat(elements.studioHours.value);
+      const studioRate = parseFloat(elements.studioRate.value);
+      const excelHours = parseFloat(elements.excelHours.value);
+      const excelRate = parseFloat(elements.excelRate.value);
+      const projects = parseFloat(elements.projects.value);
+      const projectRate = parseFloat(elements.projectRate.value);
+
+      const websites = parseFloat(elements.websites.value);
+      const websiteRate = parseFloat(elements.websiteRate.value);
+
+      const videoTotal = videos * videoRate;
+      const campaignTotal = campaigns * campaignRate;
+      const studioTotal = studioHours * studioRate;
+      const excelTotal = excelHours * excelRate;
+      const projectTotal = projects * projectRate;
+      const websiteTotal = websites * websiteRate;
+      const grandTotal = videoTotal + campaignTotal + studioTotal + excelTotal + projectTotal + websiteTotal;
+
+      elements.totalAmount.textContent = `TZS ${grandTotal.toLocaleString()}`;
+    }
+
+    function resetCalculator() {
+      elements.videos.value = 2;
+      elements.videoRate.value = 90000;
+      elements.campaigns.value = 1;
+      elements.campaignRate.value = 270000;
+      elements.studioHours.value = 2;
+      elements.studioRate.value = 125000;
+      elements.excelHours.value = 0;
+      elements.excelRate.value = 50000;
+      elements.projects.value = 0;
+      elements.projectRate.value = 250000;
+      elements.websites.value = 0;
+      elements.websiteRate.value = 800000;
+      updateSliderDisplays();
+      calculateTotal();
+    }
+
+    function handleSliderChange() {
+      updateSliderDisplays();
+      calculateTotal();
+    }
+
+    elements.videos.addEventListener('input', handleSliderChange);
+    elements.videoRate.addEventListener('input', handleSliderChange);
+    elements.campaigns.addEventListener('input', handleSliderChange);
+    elements.campaignRate.addEventListener('input', handleSliderChange);
+    elements.studioHours.addEventListener('input', handleSliderChange);
+    elements.studioRate.addEventListener('input', handleSliderChange);
+    elements.excelHours.addEventListener('input', handleSliderChange);
+    elements.excelRate.addEventListener('input', handleSliderChange);
+    elements.projects.addEventListener('input', handleSliderChange);
+    elements.projectRate.addEventListener('input', handleSliderChange);
+    elements.websites.addEventListener('input', handleSliderChange);
+    elements.websiteRate.addEventListener('input', handleSliderChange);
+
+    elements.calculateBtn.addEventListener('click', () => {
+      calculateTotal();
+      elements.calculateBtn.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        elements.calculateBtn.style.transform = 'translateY(-2px)';
+      }, 150);
+    });
+
+    elements.resetBtn.addEventListener('click', () => {
+      resetCalculator();
+      elements.resetBtn.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        elements.resetBtn.style.transform = 'translateY(-2px)';
+      }, 150);
+    });
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const baseFontStack = '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+
+      elements.businessName.textContent = config.business_name || defaultConfig.business_name;
+      elements.businessName.style.fontSize = `${baseSize * 2.5}px`;
+      elements.businessName.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.tagline.textContent = config.tagline || defaultConfig.tagline;
+      elements.tagline.style.fontSize = `${baseSize * 1.125}px`;
+
+      elements.service1Name.textContent = config.service_one_name || defaultConfig.service_one_name;
+      elements.service1Name.style.fontSize = `${baseSize * 1.25}px`;
+      elements.service1Name.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.service2Name.textContent = config.service_two_name || defaultConfig.service_two_name;
+      elements.service2Name.style.fontSize = `${baseSize * 1.25}px`;
+      elements.service2Name.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.service3Name.textContent = config.service_three_name || defaultConfig.service_three_name;
+      elements.service3Name.style.fontSize = `${baseSize * 1.25}px`;
+      elements.service3Name.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.service4Name.textContent = config.service_four_name || defaultConfig.service_four_name;
+      elements.service4Name.style.fontSize = `${baseSize * 1.25}px`;
+      elements.service4Name.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.service5Name.textContent = config.service_five_name || defaultConfig.service_five_name;
+      elements.service5Name.style.fontSize = `${baseSize * 1.25}px`;
+      elements.service5Name.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.service6Name.textContent = config.service_six_name || defaultConfig.service_six_name;
+      elements.service6Name.style.fontSize = `${baseSize * 1.25}px`;
+      elements.service6Name.style.color = config.text_color || defaultConfig.text_color;
+
+      elements.calculateBtn.textContent = config.calculate_button || defaultConfig.calculate_button;
+      elements.calculateBtn.style.fontSize = `${baseSize}px`;
+      elements.calculateBtn.style.background = `linear-gradient(135deg, ${config.primary_action_color || defaultConfig.primary_action_color} 0%, ${adjustBrightness(config.primary_action_color || defaultConfig.primary_action_color, -20)} 100%)`;
+
+      elements.resetBtn.textContent = config.reset_button || defaultConfig.reset_button;
+      elements.resetBtn.style.fontSize = `${baseSize}px`;
+      elements.resetBtn.style.background = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      const wrapper = document.querySelector('.calculator-wrapper');
+      wrapper.style.background = `linear-gradient(135deg, ${config.background_color || defaultConfig.background_color} 0%, ${adjustBrightness(config.background_color || defaultConfig.background_color, -15)} 100%)`;
+
+      const serviceCards = document.querySelectorAll('.service-card');
+      serviceCards.forEach(card => {
+        card.style.background = config.surface_color || defaultConfig.surface_color;
+      });
+    }
+
+    function adjustBrightness(color, percent) {
+      const num = parseInt(color.replace('#', ''), 16);
+      const amt = Math.round(2.55 * percent);
+      const R = (num >> 16) + amt;
+      const G = (num >> 8 & 0x00FF) + amt;
+      const B = (num & 0x0000FF) + amt;
+      return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255))
+        .toString(16).slice(1);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => {
+                config.surface_color = value;
+                window.elementSdk.setConfig({ surface_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => {
+                config.primary_action_color = value;
+                window.elementSdk.setConfig({ primary_action_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => {
+                config.secondary_action_color = value;
+                window.elementSdk.setConfig({ secondary_action_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['business_name', config.business_name || defaultConfig.business_name],
+          ['tagline', config.tagline || defaultConfig.tagline],
+          ['service_one_name', config.service_one_name || defaultConfig.service_one_name],
+          ['service_two_name', config.service_two_name || defaultConfig.service_two_name],
+          ['service_three_name', config.service_three_name || defaultConfig.service_three_name],
+          ['service_four_name', config.service_four_name || defaultConfig.service_four_name],
+          ['service_five_name', config.service_five_name || defaultConfig.service_five_name],
+          ['service_six_name', config.service_six_name || defaultConfig.service_six_name],
+          ['calculate_button', config.calculate_button || defaultConfig.calculate_button],
+          ['reset_button', config.reset_button || defaultConfig.reset_button]
+        ])
+      });
+    }
+
+    updateSliderDisplays();
+    calculateTotal();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a5ad40803f3dea1',t:'MTc2NDM0MzAwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
